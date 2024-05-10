@@ -3,4 +3,5 @@ public interface IInterfaceHandler
 {
     Task HandleAsync(CancellationTokenSource cancellationTokenSource);
     void OnTabPressed(object sender, EventArgs args);
+    void OnKeyPressed(object sender, KeyPressedEventArgs args);
 }

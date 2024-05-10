@@ -18,6 +18,7 @@ public class InterfaceManager(IInputHandler inputHandler, IInterfaceHandler inte
         var interfaceTask = _interfaceHandler.HandleAsync(cancellationTokenSource);
 
         _inputHandler.TabPressed += _interfaceHandler.OnTabPressed;
+        _inputHandler.KeyPressed += _interfaceHandler.OnKeyPressed;
 
         var inputTask = _inputHandler.HandleAsync(cancellationTokenSource);
         

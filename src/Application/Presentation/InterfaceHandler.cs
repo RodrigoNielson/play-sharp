@@ -1,29 +1,66 @@
-﻿using play_sharp.Presentation.Interfaces;
+﻿using play_sharp.Presentation.Enum;
+using play_sharp.Presentation.Interfaces;
 
 namespace play_sharp.Presentation;
 public class InterfaceHandler : IInterfaceHandler
 {
-    private bool RefreshScreen = true;
+    private bool ShouldRefreshScreen = true;
+
+    private Screen CurrentScreen = Screen.Text;
+    private int TextCursorPosition = 2;
+    public char[] CurrentText = new char[Constants.WindowWidth];
+
+    private static object refreshLock = new object();
 
     public async Task HandleAsync(CancellationTokenSource cancellationTokenSource)
     {
         do
         {
-            if (RefreshScreen)
+            if (ShouldRefreshScreen)
             {
-                UpdateScreen();
-                UpdateCursorPosition();
+                lock (refreshLock)
+                {
+                    RefreshScreen();
+                }
             }
-
+                
 
             await Task.Delay(50);
         } while (!cancellationTokenSource.IsCancellationRequested);
     }
 
+    private void RefreshScreen()
+    {
+        UpdateScreen();
+        UpdateCursorPosition();
+    }
 
     public void OnTabPressed(object sender, EventArgs args)
     {
-        RefreshScreen = true;
+        ShouldRefreshScreen = true;
+    }
+
+    public void OnKeyPressed(object sender, KeyPressedEventArgs args)
+    {
+        if (CurrentScreen == Screen.Text)
+        {
+            lock (refreshLock)
+            {
+                if (args.ConsoleKey.Key == ConsoleKey.Backspace)
+                {
+                    if (TextCursorPosition > 0)
+                        TextCursorPosition--;
+
+                    CurrentText[TextCursorPosition] = ' ';
+                }
+                else
+                {
+                    CurrentText[TextCursorPosition++] = args.Key;
+                }
+                
+                RefreshScreen();
+            }
+        }
     }
 
     private void UpdateScreen()
@@ -68,7 +105,6 @@ public class InterfaceHandler : IInterfaceHandler
         Console.WriteLine("                                  |                                                                 ");
         Console.WriteLine("                                  |                                                                 ");
         Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
         Console.BackgroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("Band 01 - Album Name - Music 1                                                                      ");
         Console.BackgroundColor = ConsoleColor.Gray;
@@ -78,7 +114,12 @@ public class InterfaceHandler : IInterfaceHandler
 
         Console.WriteLine($"> 00:05 / 2:06 - vol: {random}                                                                           ");
 
-        RefreshScreen = false;
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.ForegroundColor = ConsoleColor.White;
+
+        Console.WriteLine($"> {new string(CurrentText)}");
+
+        ShouldRefreshScreen = false;
     }
 
     private void UpdateCursorPosition()

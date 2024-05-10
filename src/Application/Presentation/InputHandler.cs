@@ -1,9 +1,12 @@
 ﻿using play_sharp.Presentation.Interfaces;
+using static play_sharp.Presentation.Delegates;
+using static play_sharp.Presentation.Interfaces.IInputHandler;
 
 namespace play_sharp.Presentation;
 public class InputHandler : IInputHandler
 {
     public event EventHandler TabPressed;
+    public event KeyPressed KeyPressed;
 
     public async Task HandleAsync(CancellationTokenSource cancellationTokenSource)
     {
@@ -34,8 +37,21 @@ public class InputHandler : IInputHandler
                     if (Console.CursorTop < Console.WindowHeight - 1 && Console.CursorTop < Constants.WindowHeight - 1)
                         Console.CursorTop += 1;
                     break;
+                default:
+                    KeyPressed?.Invoke(this, new KeyPressedEventArgs
+                    {
+                        Key = key.KeyChar,
+                        ConsoleKey = key
+                    });
+                    break;
             }
 
-        } while (key.Key != ConsoleKey.Escape);
+        } while (true);
     }
+}
+
+public class KeyPressedEventArgs : EventArgs
+{
+    public char Key { get; set; }
+    public ConsoleKeyInfo ConsoleKey { get; set; }
 }
