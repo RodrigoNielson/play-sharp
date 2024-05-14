@@ -1,6 +1,5 @@
 ﻿using play_sharp.Presentation.Interfaces;
 using static play_sharp.Presentation.Delegates;
-using static play_sharp.Presentation.Interfaces.IInputHandler;
 
 namespace play_sharp.Presentation;
 public class InputHandler : IInputHandler

@@ -1,5 +1,5 @@
 ﻿namespace play_sharp.Presentation.Enum;
-public enum Screen
+public enum AreaType
 {
     Text,
     Artist,

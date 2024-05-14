@@ -1,16 +1,24 @@
 ﻿using play_sharp.Presentation.Enum;
 using play_sharp.Presentation.Interfaces;
+using play_sharp.Presentation.Screens;
 
 namespace play_sharp.Presentation;
 public class InterfaceHandler : IInterfaceHandler
 {
     private bool ShouldRefreshScreen = true;
 
-    private Screen CurrentScreen = Screen.Text;
+    private AreaType CurrentScreen = AreaType.Text;
     private int TextCursorPosition = 2;
     public char[] CurrentText = new char[Constants.WindowWidth];
 
     private static object refreshLock = new object();
+
+    public FolderMusicScreen FolderMusicScreen { get; set; }
+
+    public InterfaceHandler()
+    {
+        FolderMusicScreen = new FolderMusicScreen();
+    }
 
     public async Task HandleAsync(CancellationTokenSource cancellationTokenSource)
     {
@@ -23,7 +31,6 @@ public class InterfaceHandler : IInterfaceHandler
                     RefreshScreen();
                 }
             }
-                
 
             await Task.Delay(50);
         } while (!cancellationTokenSource.IsCancellationRequested);
@@ -31,6 +38,7 @@ public class InterfaceHandler : IInterfaceHandler
 
     private void RefreshScreen()
     {
+        FolderMusicScreen.RefreshScreen();
         UpdateScreen();
         UpdateCursorPosition();
     }
@@ -42,11 +50,18 @@ public class InterfaceHandler : IInterfaceHandler
 
     public void OnKeyPressed(object sender, KeyPressedEventArgs args)
     {
-        if (CurrentScreen == Screen.Text)
+        if (CurrentScreen == AreaType.Text)
         {
             lock (refreshLock)
             {
-                if (args.ConsoleKey.Key == ConsoleKey.Backspace)
+                if (args.ConsoleKey.Key == ConsoleKey.Enter)
+                {
+                    // load directory
+
+                    //FolderMusicScreen.LoadFiles("C:\\Users\\digo_\\Music\\Testes2");
+                    FolderMusicScreen.LoadFiles(new string(CurrentText));
+                }
+                else if (args.ConsoleKey.Key == ConsoleKey.Backspace)
                 {
                     if (TextCursorPosition > 0)
                         TextCursorPosition--;
@@ -65,54 +80,53 @@ public class InterfaceHandler : IInterfaceHandler
 
     private void UpdateScreen()
     {
-        Console.CursorLeft = 0;
-        Console.CursorTop = 0;
+        //Console.CursorLeft = 0;
+        //Console.CursorTop = 0;
 
+        //Console.BackgroundColor = ConsoleColor.Black;
+        //Console.ForegroundColor = ConsoleColor.White;
 
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.ForegroundColor = ConsoleColor.White;
+        //Console.BackgroundColor = ConsoleColor.DarkGray;
+        //Console.WriteLine("Folder                             Track                                                            ");
+        //Console.BackgroundColor = ConsoleColor.Black;
+        //Console.WriteLine("Band 01                           | 0. Music 0                                                  0:51");
+        //Console.WriteLine("Band 02                           | 1. Music 1                                                  1:51");
+        //Console.WriteLine("                                  | 2. Music 2                                                  3:01");
+        //Console.Write("                                  |");
 
-        Console.BackgroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("Artist                             Track                                                            ");
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine("Band 01                           |Album Name--------------------------------------------------43:29");
-        Console.WriteLine("Band 02                           | 1. Music 1                                                  1:51");
-        Console.WriteLine("                                  | 2. Music 2                                                  3:01");
-        Console.Write("                                  |");
+        //Console.BackgroundColor = ConsoleColor.DarkBlue;
 
-        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        //Console.WriteLine(" 3. Music 3                                                  2:06                    ");
+        //Console.BackgroundColor = ConsoleColor.Black;
+        //Console.WriteLine("                                  | 4. Music 4                                                  2:19");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.WriteLine("                                  |                                                                 ");
+        //Console.BackgroundColor = ConsoleColor.DarkGray;
+        //Console.WriteLine("Band 01 - Album Name - Music 1                                                                      ");
+        //Console.BackgroundColor = ConsoleColor.Gray;
+        //Console.ForegroundColor = ConsoleColor.Black;
 
-        Console.WriteLine(" 3. Music 3                                                  2:06                    ");
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine("                                  | 4. Music 4                                                  2:19");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.WriteLine("                                  |                                                                 ");
-        Console.BackgroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("Band 01 - Album Name - Music 1                                                                      ");
-        Console.BackgroundColor = ConsoleColor.Gray;
-        Console.ForegroundColor = ConsoleColor.Black;
+        //var random = new Random().NextInt64(0, 100).ToString().PadLeft(3, '0');
 
-        var random = new Random().NextInt64(0, 100).ToString().PadLeft(3, '0');
-
-        Console.WriteLine($"> 00:05 / 2:06 - vol: {random}                                                                           ");
+        //Console.WriteLine($"> 00:05 / 2:06 - vol: {random}                                                                           ");
 
         Console.BackgroundColor = ConsoleColor.Black;
         Console.ForegroundColor = ConsoleColor.White;
